@@ -18,11 +18,15 @@ end
 
 get '/start' do
   bpmachine = BPMachine.current
-  bpmachine.read
-  time = bpmachine.last_reading[:time]
+  begin
+    bpmachine.read
+  rescue
+    #
+  end  
+  #time = bpmachine.last_reading[:time]
   bpmachine.start
   #while 
-  #sleep 60
+  sleep 30
   redirect to('/results')
 end
 
