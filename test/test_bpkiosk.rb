@@ -65,7 +65,7 @@ class TestBPKiosk < MiniTest::Unit::TestCase
       BPMachine.stub(:current, @bpmachine) do
         @browser.get '/start'
       end
-      assert @browser.last_response.ok?
+      assert @browser.last_response.ok?, 'should open start page'
       assert @browser.last_response.body.include?('diastolic'), 'should show BP result'
     end
   end

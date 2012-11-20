@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <title>Registration</title>
+        <script type="text/javascript" language="javascript" src="lib/javascripts/touchScreenToolkit.js" defer  ></script>
+        <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
+        <script language="javascript">
+            tstUsername = "";
+            tstCurrentDate = "2012/11/19";
+            tt_cancel_destination = '/';
+            tt_cancel_show = 'show.html';
+            
+            var today = new Date();
+            var y = today.getFullYear();
+            var m = padZeros((today.getMonth() + 1), 2);
+            var date0 = y + "-" + m + "-" + padZeros(today.getDate(), 2);
+            var date1 = y+"-"+m+"-10";
+            var date2 = y+"-"+m+"-26";
+            
+            var sel = {};
+            
+            function padZeros(number, positions){
+                var zeros = parseInt(positions) - String(number).length;
+                var padded = "";
+    
+                for(var i = 0; i < zeros; i++){
+                    padded += "0";
+                }
+    
+                padded += String(number);
+    
+                return padded;
+            }
+            
+            function customizePage() {
+              __$("keyboard").innerHTML = "";
+              showFixedKeyboard(__$("keyboard"), "touchscreenInput0");
+            }
+
+            sel[date1] = 600;
+            sel[date2] = 4;
+            
+        </script>
+        <style>
+            .tt_unknown #SHIFT {
+                display: none;
+            }
+            label.helpTextClass {
+              color: #005500;
+              font-size: 3em;
+            }
+        </style>
+    </head>
+    <body><div id='content'>
+            <div id='description' style='color:#777;position:absolute;margin-top:-70px;'></div><center>
+                <form  action='/results' method="post">
+                    <table cellpadding=10>
+                        <tr>
+                            <th colspan=2>Registration</th>
+                        </tr>
+                        </tr>
+                        <tr>
+                            <td>Client ID</td>
+                            <td>
+                                <input type='text' value='' field_type='text' name='client_id' id='client_id' textCase='upper'
+                                       helptext='Scan/Enter ID'
+                                       tt_onLoad='customizePage();' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align='center'>
+                                <input type='submit' value='Finish' />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </center>
+        </div>
+    </body>
+</html>

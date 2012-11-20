@@ -42,8 +42,21 @@ get '/consent' do
 end
 
 get '/stop' do
-  session[:bpmachine].stop
+  bpmachine = BPMachine.current
+  bpmachine.stop
   redirect to('/')  
+end
+
+get '/auth_menu' do
+  erb :auth_menu
+end
+
+get '/sign_in' do
+  erb :sign_in
+end
+
+get '/sign_up' do
+  erb :registered
 end
 
 get '/find_client' do
