@@ -22,13 +22,17 @@ get '/start' do
   time = bpmachine.last_reading[:time]
   bpmachine.start
   #while 
-  sleep 60
+  #sleep 60
   redirect to('/results')
 end
 
 get '/results' do
   bpmachine = BPMachine.current
-  bpmachine.read
+  resp = nil
+  while resp && resp.length == 64 && resp[62] == "\003" && 
+        resp[0..5] == ['\026','\026','\001','0','0','\002']
+    resp = bpmachine.read
+  end
   @last_results = bpmachine.last_reading
   erb :results
 end

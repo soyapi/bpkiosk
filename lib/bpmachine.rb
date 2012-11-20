@@ -31,6 +31,7 @@ class BPMachine
       while resp.length < 64 #(Time.now - start_time) < @@TIMEOUT
         data = sp.getc
         resp << data.chr
+        resp.compact!
       end
     end
     
