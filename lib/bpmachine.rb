@@ -1,7 +1,7 @@
 require 'serialport'
 
 class BPMachine
-  @@TIMEOUT = 120
+  @@TIMEOUT = 60
   @@commands = {:start => "\x16\x16\x01\x30\x20\x02\x53\x54\x03\x07\x0D\x0A",
                 :stop  => "\x16\x16\x01\x30\x20\x02\x53\x50\x03\x03\x0D\x0A",
                 :read  => "\x16\x16\x01\x30\x30\x02\x52\x42\x03\x10\x0D\x0A"}
@@ -25,16 +25,14 @@ class BPMachine
   def read
     resp = []
     SerialPort.open(@device, @baud) do |sp|
-      sp.write @@commands[:read].to_s
       start_time = Time.now
       data = ''
-      while resp.length < 64 #(Time.now - start_time) < @@TIMEOUT
+      sleep 1
+      while resp.length < 64 #&& (Time.now - start_time) < @@TIMEOUT
         data = sp.getc
         resp << data.chr
-        resp.compact!
       end
     end
-    
     
     # resp[13..14] year
     # 15,16 MM
@@ -48,16 +46,14 @@ class BPMachine
   end
   
   def last_reading
-    #"Systolic:  #{@last_resp[34..36].join}
-    # Diastolic: #{@last_resp[44..46].join}
-    # Pulse:     #{@last_resp[49..51].join}/min"
-    
-    #y1,y2,y3,
-     
-    {:systolic  => "#{@last_resp[34..36].join}".to_i,
-     :diastolic => "#{@last_resp[44..46].join}".to_i,
-     :pulse     => "#{@last_resp[49..51].join}".to_i,
-     :time      => "#{@last_resp[13..22].join}".to_i}
+    if @last_resp 
+      {:systolic  => "#{@last_resp[34..36].join}".to_i,
+       :diastolic => "#{@last_resp[44..46].join}".to_i,
+       :pulse     => "#{@last_resp[49..51].join}".to_i,
+       :time      => "#{@last_resp[13..22].join}".to_i}
+    else
+      {:systolic => nil, :diastolic => nil, :pulse => nil, :time => nil}
+    end
   end
   
   def start
@@ -79,5 +75,27 @@ class BPMachine
   
   def commands
     @@commands
+  end
+  
+  def self.test
+    Logger.class_eval { alias :write :'<<' }
+    logger = Logger.new 'log/app.log'
+    
+    use Rack::CommonLogger, logger
+    
+    if BPMachine.current
+      bpmachine = BPMachine.current
+    else
+      bpmachine = BPMachine.new settings.device, settings.baud
+      BPMachine.current = bpmachine
+    end
+      
+    bpmachine.start
+    sleep 30
+    resp = bpmachine.read
+
+    logger.info "Response: #{resp.join(' ')}"
+      
+    bpmachine.last_reading
   end
 end

@@ -31,9 +31,17 @@
 <div id="residencevalue">:<%= @last_results[:diastolic]%> mmHg</div>
 </div>
 <div id="ageRow" class="patientLabelRow">
-<div id="age" class="patientLabel">PULSE</div>
-<div id="agevalue" class="patientLabelValue">:<%= @last_results[:pulse]%> /min</div>
+  <div id="age" class="patientLabel">PULSE</div>
+  <div id="agevalue" class="patientLabelValue">:<%= @last_results[:pulse]%> /min</div>
 </div>
+<% if @results %>
+<div id="trendRow" class="patientLabelRow">
+  <div id="age" class="patientLabel">Trend</div>
+  <div id="agevalue" class="patientLabelValue">
+    Trend here
+  </div>
+</div>
+<% end %>
 </div>
 </div>
 </div>

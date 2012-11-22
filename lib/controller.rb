@@ -1,10 +1,22 @@
-if test?
-  session = {}
-else
-  enable :sessions
-end
+#enable :sessions
+use Rack::Session::Pool, :expire_after => 2592000
 
-@session = session
+helpers do
+  
+  def print_and_redirect(print_url,
+                         redirect_url='/registered',
+                         message = "Printing, please wait...", 
+                         show_next_button = false, client_id = nil)
+    @print_url = print_url
+    @redirect_url = redirect_url
+    @message = message
+    @show_next_button = show_next_button
+    @client_id = client_id
+    
+    erb :print
+  end
+  
+end
 
 get '/' do
   BPMachine.current = BPMachine.new settings.device, settings.baud
@@ -17,27 +29,37 @@ get '/read' do
 end
 
 get '/start' do
-  bpmachine = BPMachine.current
-  begin
-    bpmachine.read
-  rescue
-    #
-  end  
-  #time = bpmachine.last_reading[:time]
+  if BPMachine.current
+    bpmachine = BPMachine.current
+  else
+    bpmachine = BPMachine.new settings.device, settings.baud
+    BPMachine.current = bpmachine
+  end
+    
   bpmachine.start
-  #while 
   sleep 30
-  redirect to('/results')
+  resp = bpmachine.read
+  results = bpmachine.last_reading
+  session[:results] = results
+
+  logger.info "Response: #{resp.join(' ')}"
+    
+  redirect to("/results?systolic=#{results[:systolic]}&" + 
+              "diastolic=#{results[:diastolic]}&pulse=#{results[:pulse]}")
 end
 
 get '/results' do
-  bpmachine = BPMachine.current
-  resp = nil
-  while resp && resp.length == 64 && resp[62] == "\003" && 
-        resp[0..5] == ['\026','\026','\001','0','0','\002']
-    resp = bpmachine.read
-  end
-  @last_results = bpmachine.last_reading
+  @results = nil
+  @last_results = params
+  session[:results] = @last_results
+  logger.info "Results: #{@last_results}"
+  erb :results
+end
+
+post '/results' do
+  @last_results = session[:results]
+  @results = Reading.find_all_by_client_id(session[:client_id])
+  
   erb :results
 end
 
@@ -46,7 +68,13 @@ get '/consent' do
 end
 
 get '/stop' do
-  bpmachine = BPMachine.current
+  if BPMachine.current
+    bpmachine = BPMachine.current
+  else
+    bpmachine = BPMachine.new settings.device, settings.baud
+    BPMachine.current = bpmachine
+  end
+  
   bpmachine.stop
   redirect to('/')  
 end
@@ -60,29 +88,33 @@ get '/sign_in' do
 end
 
 get '/sign_up' do
+  # create client
+  @client = Client.add
+  session[:client_id] = @client.id
+  
+  results = session[:results]
+  reading = Reading.create(:systolic_pressure  => results[:systolic],
+                           :diastolic_pressure => results[:diastolic],
+                           :pulse_rate => results[:pulse_rate],
+                           :client_id => @client.id)
+                            
+  print_and_redirect('/print_client_number?client_id=' + @client.id.to_s)
+end               
+
+get '/registered' do
+  @client = Client.find session[:client_id]
   erb :registered
 end
 
-get '/find_client' do
-  client = Client.find_by_client_number params[:client_number]
-  if client
-    "Client #{client.client_number} found"
-  else
-    "Client #{params[:client_number]} NOT found"
-  end
-end
+get '/print_client_number' do
+  client = Client.find(params[:client_id])
+  label_commands = client.number_label
+  File.open('/tmp/label.data', 'w') {|f| f.write label_commands}
 
-get '/save_reading' do
-  # create client
-  client = Client.add
-  
-  bpmachine = BPMachine.current
-  last_result = bpmachine.last_reading
-  reading = Reading.create(:systolic_pressure  => last_result[:systolic],
-                 :diastolic_pressure => last_result[:diastolic],
-                 :pulse_rate => last_result[:pulse_rate],
-                 :client_id => client.id)
-  "Reading created: #{reading.to_yaml}"                 
+  send_file('/tmp/label.data', :type=>"application/label; charset=utf-8",
+            #:stream => false, 
+            :filename=>"#{client.id}#{rand(10000)}.lbl",
+            :disposition => "inline")
 end
 
 get '/no-controls' do

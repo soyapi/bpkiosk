@@ -23,13 +23,14 @@
 <div id="content" class="centered">
   <div class="top-space">&nbsp;</div>
   <h2>Registered</h2>
-   <p>You ID number is XXXXXXX.</p>
+   <p>You ID number is <%= @client.client_number %>.</p>
    
    <p>Keep this ID and remember to bring it with you next time.</p>
    
    <p>Thank you for using the BP Kiosk</p>
    <div id="buttons" class="buttonsDiv">
-      <button id="nextButton" class="button green navButton" onmousedown="javascript:window.location='/read';">
+      <button id="nextButton" class="button green navButton"
+              onmousedown="javascript:window.location='/';">
         <span>NEXT</span>
       </button>
    </div>
