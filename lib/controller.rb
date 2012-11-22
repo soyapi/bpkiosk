@@ -111,10 +111,10 @@ get '/print_client_number' do
   label_commands = client.number_label
   File.open('/tmp/label.data', 'w') {|f| f.write label_commands}
 
-  send_file('/tmp/label.data', :type=>"application/label; charset=utf-8",
-            #:stream => false, 
-            :filename=>"#{client.id}#{rand(10000)}.lbl",
-            :disposition => "inline")
+  send_file('/tmp/label.data', :type => 'application/label',
+            :stream => false,
+            :filename => "#{client.id}#{rand(10000)}.lbl",
+            :disposition => 'inline')
 end
 
 get '/no-controls' do
