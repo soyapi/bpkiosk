@@ -1,4 +1,5 @@
-require 'sinatra/base'
+require 'sinatra'
+#require 'sinatra/base'
 require 'active_record'
 require 'national_patient_id'
 require 'serialport'
@@ -16,7 +17,8 @@ class BPKiosk
     set :title, 'Open BP Kiosk'
     set :device, '/dev/ttyUSB0' #TODO: move to a config yaml
     set :baud, 2400
-    db_config = {:adapter => 'sqlite3', :database => '/home/soyapi/src/pitt/bpkiosk/db/bpkiosk.db'}
+    db_config = {:adapter => 'sqlite3',
+                 :database => Sinatra::Application.root + '/db/bpkiosk.db'}
     
     ActiveRecord::Base.establish_connection(db_config)
   end    
