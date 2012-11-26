@@ -34,6 +34,9 @@
             function customizePage() {
               __$("keyboard").innerHTML = "";
               showFixedKeyboard(__$("keyboard"), "touchscreenInput0");
+              <% if params[:error] %>
+              showMessage("<%= params[:error]%>");
+              <% end %>
             }
 
             sel[date1] = 600;
@@ -59,9 +62,9 @@
                         </tr>
                         </tr>
                         <tr>
-                            <td>Client ID</td>
+                            <td>Client Number</td>
                             <td>
-                                <input type='text' value='' field_type='text' name='client_id' id='client_id' textCase='upper'
+                                <input type='text' value='' field_type='text' name='client_number' id='client_number' textCase='upper'
                                        helptext='Scan/Enter ID'
                                        tt_onLoad='customizePage();' />
                             </td>

@@ -13,6 +13,7 @@ set :environment, :test
 set :device, '/dev/ttyUSB0'
 set :baud, 2400
 set :title, 'BP Kiosk'
+set :views, '../views'
 
 db_config = {:adapter => 'sqlite3',
              :database => '/home/soyapi/src/pitt/bpkiosk/db/bpkiosk-test.db'}
@@ -88,7 +89,7 @@ class TestBPKiosk < MiniTest::Unit::TestCase
   end    
   
   def test_find_client
-    @browser.get '/find_client?client_number=ABC'
+    @browser.post '/results', :client_number => '1000AA'
     assert @browser.last_response.body.include?('NOT found'), @browser.last_response.body
     
     client = Client.add

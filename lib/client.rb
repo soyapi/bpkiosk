@@ -14,7 +14,6 @@ class Client < ActiveRecord::Base
   end
   
   def number_label
-    require 'zebra_printer'
     label = ZebraPrinter::StandardLabel.new
     label.font_size = 2
     label.font_horizontal_multiplier = 2
@@ -22,8 +21,8 @@ class Client < ActiveRecord::Base
     label.left_margin = 50
     label.draw_barcode(50,180,0,1,5,15,120,false, self.client_number)
     label.draw_multi_text("BP Kiosk")
+    #label.draw_multi_text(" ")
     label.draw_multi_text(self.to_s)
-    #label.draw_multi_text("Unknown location")
     label.print
   end
 end

@@ -3,6 +3,7 @@ require 'sinatra'
 require 'active_record'
 require 'national_patient_id'
 require 'serialport'
+require 'zebra_printer'
 require 'rack'
 require 'logger'
 
@@ -17,6 +18,7 @@ class BPKiosk
     set :title, 'Open BP Kiosk'
     set :device, '/dev/ttyUSB0' #TODO: move to a config yaml
     set :baud, 2400
+    set :printer_port, 4242
     db_config = {:adapter => 'sqlite3',
                  :database => Sinatra::Application.root + '/db/bpkiosk.db'}
     
