@@ -344,7 +344,7 @@ div.panel h2 {
 
 #nav {
     background-color: #333333;
-    border-top:3px solid :#99AAB7;
+    border-top:3px solid #99AAB7;
     color:#CADCEA;
     height:80px;
     width:100%;
@@ -405,8 +405,8 @@ div.panel h2 {
     border-radius: 20px;
     /* float: left; */
     overflow: hidden;
-    margin: 50px 290px;
-    width: 40%;
+    margin: 50px 50px;
+    width: 80%;
     background-color: #fff;
     padding: 10px;
     -moz-user-select:none;

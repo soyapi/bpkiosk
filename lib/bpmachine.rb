@@ -27,9 +27,13 @@ class BPMachine
     SerialPort.open(@device, @baud) do |sp|
       start_time = Time.now
       data = ''
-      sleep 1
+      sleep 30
       while resp.length < 64 #&& (Time.now - start_time) < @@TIMEOUT
         data = sp.getc
+        next if data.chr[0] != 22 and resp.length <= 1
+        next if data.chr[0] != 1 and resp.length == 2
+        #next if data.chr[0] != 0 and ([3,4].include? resp.length)
+        #next if data.chr[0] != 2 and resp.length == 5
         resp << data.chr
       end
     end

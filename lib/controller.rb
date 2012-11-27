@@ -36,7 +36,8 @@ helpers do
   
   # Send label to printer  
   def send_data(file_path, *values)
-    print_cmd = "cat #{file_path} | netcat -q 1 localhost Settings.printer_port"
+    print_cmd = "cat #{file_path} | netcat -q 1 localhost #{settings.printer_port}"
+    #print_cmd = "cat #{file_path} | nc.traditional -q 1 localhost #{settings.printer_port}"
     `#{print_cmd}` rescue logger.info "Failed to print label with command '#{print_cmd}'"
   end
   

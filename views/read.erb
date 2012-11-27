@@ -8,17 +8,29 @@
 <title>Welcome to the BP Kiosk</title>
 <script src="lib/javascripts/touchScreenToolkit.js" language="javascript" type="text/javascript"></script>
 <script language="javascript" src="lib/javascripts/dashboard.js" type="text/javascript"></script>
+<style type="text/css">
+  .helpTextClass {
+    margin: auto;
+    text-align: center;
+  }
+</style>
 </head>
 <body>
 <div id="content">
 <div id="tabPageContainer">
+  <label id="helpText0" class="helpTextClass">
 <p>
-<h1>Stick your arm in the BP machine and press START!</h1>
+<h3>Place your arm in the BP machine and press Start</h3>
 </p>
+</label>
 </div>
-<div id="footer" >
-<button class="green" onmousedown="javascript:window.location='/start';">
-<span>START</span>
+<!--div id="footer" -->
+<div id="buttons" class="buttonsDiv">
+<button id="cancelButton" class="button red navButton" onmousedown="javascript:window.location='/';">
+<span>Cancel</span>
+</button>
+  <button id="nextButton" class="button green navButton" onmousedown="javascript:window.location='/start';">
+<span>Start</span>
 </button>
 </div>
 </div>
